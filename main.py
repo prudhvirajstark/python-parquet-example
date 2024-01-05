@@ -35,3 +35,22 @@ print("Original IoT Data:")
 print(df.head())
 print("\nRead IoT Data from Parquet:")
 print(read_df.head())
+
+import timeit
+
+
+def query_data_for_date(df, query_date):
+    return df[df['date'] == query_date]
+
+
+query_date = datetime(2023, 1, 1).date()
+
+original_query_time = timeit.timeit(lambda: query_data_for_date(df, query_date), number=1000)
+
+parquet_query_time = timeit.timeit(lambda: query_data_for_date(read_df, query_date), number=1000)
+
+# Display the query performance results
+print(f"Querying data for {query_date}:\n")
+print(f"Time taken on the original DataFrame: {original_query_time:.6f} seconds")
+print(f"Time taken on the Parquet file with partitioning: {parquet_query_time:.6f} seconds")
+
