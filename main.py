@@ -22,25 +22,15 @@ print(len(data['occupancy']))
 print(len(data['timestamp']))
 df = pd.DataFrame(data)
 
-# Add a new column for date to be used for partitioning
 df['date'] = df['timestamp'].dt.date
-
-# Convert Pandas DataFrame to PyArrow Table
 table = pa.Table.from_pandas(df)
 
-# Specify the Parquet file path
 parquet_file_path = 'smart_building_data.parquet'
-
-# Write PyArrow Table to Parquet file with partitioning
 pq.write_to_dataset(table, root_path=parquet_file_path, partition_cols=['date'], compression='snappy', flavor='spark',use_legacy_dataset=True)
-
-# Read Parquet file into PyArrow Table
 read_table = pq.read_table(parquet_file_path)
 
-# Convert PyArrow Table back to Pandas DataFrame
 read_df = read_table.to_pandas()
 
-# Display original and read DataFrames
 print("Original IoT Data:")
 print(df.head())
 print("\nRead IoT Data from Parquet:")
